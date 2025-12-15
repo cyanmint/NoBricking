@@ -1,5 +1,17 @@
 # Changelog
 
+## Version 1.1.0
+
+### New Features
+- **Web UI for KSU**: Added intuitive web-based management interface for KernelSU users
+  - Real-time status monitoring (boot flags, backup information)
+  - One-click backup creation
+  - Manual flag clearing
+  - Backup restore with confirmation
+  - Activity logging
+  - Responsive design for mobile and desktop
+- Integrated with KernelSU's built-in WebUI system (no separate HTTP server required)
+
 ## Version 1.0.0 (Initial Release)
 
 ### Features

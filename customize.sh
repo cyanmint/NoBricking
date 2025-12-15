@@ -17,7 +17,7 @@ else
 fi
 
 ui_print "- Installing NoBricking Module"
-ui_print "- Version: 1.0.0"
+ui_print "- Version: 1.1.0"
 
 # Extract module files
 ui_print "- Extracting module files"
@@ -30,6 +30,12 @@ set_perm $MODPATH/service.sh 0 0 0755
 set_perm $MODPATH/post-fs-data.sh 0 0 0755
 set_perm $MODPATH/action.sh 0 0 0755
 set_perm $MODPATH/uninstall.sh 0 0 0755
+set_perm $MODPATH/boot-completed.sh 0 0 0755
+
+# Set webui permissions (for KSU)
+if [ -d "$MODPATH/webui" ]; then
+    set_perm_recursive $MODPATH/webui 0 0 0755 0644
+fi
 
 # Create backup directory
 BACKUP_DIR="/data/adb/nobricking_backups"
@@ -47,3 +53,8 @@ sh $MODPATH/action.sh install
 ui_print "- Installation complete"
 ui_print "- NoBricking will monitor boot status"
 ui_print "- After 3 failed boots, backups will be restored"
+
+# Show WebUI info for KSU
+if [ "$MODTYPE" = "KSU" ]; then
+    ui_print "- WebUI available in KSU Manager > Modules > NoBricking"
+fi
