@@ -40,9 +40,14 @@ restore_backups() {
         if [ -z "$BOOT_PART" ]; then
             BOOT_PART=$(find /dev/block/by-name -name "boot${SLOT}" -o -name "boot_[ab]" 2>/dev/null | grep "${SLOT}" | head -n1)
         fi
-        if [ -n "$BOOT_PART" ]; then
-            dd if="$BACKUP_DIR/partitions/boot${SLOT}.img" of="$BOOT_PART" bs=4096
-            echo "$(date): Boot partition restored to $BOOT_PART" >> "$BACKUP_DIR/restore.log"
+        if [ -n "$BOOT_PART" ] && [ -b "$BOOT_PART" ]; then
+            dd if="$BACKUP_DIR/partitions/boot${SLOT}.img" of="$BOOT_PART" bs=4096 conv=fsync
+            if [ $? -eq 0 ]; then
+                sync
+                echo "$(date): Boot partition restored successfully to $BOOT_PART" >> "$BACKUP_DIR/restore.log"
+            else
+                echo "$(date): ERROR: Failed to restore boot partition" >> "$BACKUP_DIR/restore.log"
+            fi
         fi
     fi
     
@@ -53,9 +58,14 @@ restore_backups() {
         if [ -z "$INIT_BOOT_PART" ]; then
             INIT_BOOT_PART=$(find /dev/block/by-name -name "init_boot${SLOT}" -o -name "init_boot_[ab]" 2>/dev/null | grep "${SLOT}" | head -n1)
         fi
-        if [ -n "$INIT_BOOT_PART" ]; then
-            dd if="$BACKUP_DIR/partitions/init_boot${SLOT}.img" of="$INIT_BOOT_PART" bs=4096
-            echo "$(date): Init_boot partition restored to $INIT_BOOT_PART" >> "$BACKUP_DIR/restore.log"
+        if [ -n "$INIT_BOOT_PART" ] && [ -b "$INIT_BOOT_PART" ]; then
+            dd if="$BACKUP_DIR/partitions/init_boot${SLOT}.img" of="$INIT_BOOT_PART" bs=4096 conv=fsync
+            if [ $? -eq 0 ]; then
+                sync
+                echo "$(date): Init_boot partition restored successfully to $INIT_BOOT_PART" >> "$BACKUP_DIR/restore.log"
+            else
+                echo "$(date): ERROR: Failed to restore init_boot partition" >> "$BACKUP_DIR/restore.log"
+            fi
         fi
     fi
     
@@ -66,9 +76,14 @@ restore_backups() {
         if [ -z "$RECOVERY_PART" ]; then
             RECOVERY_PART=$(find /dev/block/by-name -name "recovery" 2>/dev/null | head -n1)
         fi
-        if [ -n "$RECOVERY_PART" ]; then
-            dd if="$BACKUP_DIR/partitions/recovery.img" of="$RECOVERY_PART" bs=4096
-            echo "$(date): Recovery partition restored to $RECOVERY_PART" >> "$BACKUP_DIR/restore.log"
+        if [ -n "$RECOVERY_PART" ] && [ -b "$RECOVERY_PART" ]; then
+            dd if="$BACKUP_DIR/partitions/recovery.img" of="$RECOVERY_PART" bs=4096 conv=fsync
+            if [ $? -eq 0 ]; then
+                sync
+                echo "$(date): Recovery partition restored successfully to $RECOVERY_PART" >> "$BACKUP_DIR/restore.log"
+            else
+                echo "$(date): ERROR: Failed to restore recovery partition" >> "$BACKUP_DIR/restore.log"
+            fi
         fi
     fi
     
@@ -84,14 +99,16 @@ restore_backups() {
         fi
         
         # Create disable files for all modules except nobricking
-        for mod in "$MODULE_DIR"/*; do
-            if [ -d "$mod" ]; then
-                modname=$(basename "$mod")
-                if [ "$modname" != "nobricking" ]; then
-                    touch "$mod/disable"
+        if [ -d "$MODULE_DIR" ]; then
+            for mod in "$MODULE_DIR"/*; do
+                if [ -d "$mod" ]; then
+                    modname=$(basename "$mod")
+                    if [ "$modname" != "nobricking" ]; then
+                        touch "$mod/disable"
+                    fi
                 fi
-            fi
-        done
+            done
+        fi
         
         # Re-enable modules from backup list
         while IFS= read -r modname; do

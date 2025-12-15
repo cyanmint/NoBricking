@@ -47,16 +47,23 @@ perform_backup() {
         fi
     fi
     
-    if [ -n "$BOOT_PART" ]; then
+    if [ -n "$BOOT_PART" ] && [ -b "$BOOT_PART" ]; then
         echo "Backing up boot partition from $BOOT_PART"
-        dd if="$BOOT_PART" of="$BACKUP_DIR/partitions/boot${SLOT}.img" bs=4096 2>&1
-        if [ $? -eq 0 ]; then
-            echo "Boot partition backed up successfully"
+        # Check available space
+        PART_SIZE=$(blockdev --getsize64 "$BOOT_PART" 2>/dev/null || echo "0")
+        if [ "$PART_SIZE" -gt 0 ]; then
+            dd if="$BOOT_PART" of="$BACKUP_DIR/partitions/boot${SLOT}.img" bs=4096 conv=fsync 2>&1
+            if [ $? -eq 0 ]; then
+                sync
+                echo "Boot partition backed up successfully"
+            else
+                echo "Failed to backup boot partition"
+            fi
         else
-            echo "Failed to backup boot partition"
+            echo "Unable to determine boot partition size"
         fi
     else
-        echo "Boot partition not found"
+        echo "Boot partition not found or not accessible"
     fi
     
     # Backup init_boot partition (if it exists)
@@ -68,13 +75,20 @@ perform_backup() {
         fi
     fi
     
-    if [ -n "$INIT_BOOT_PART" ]; then
+    if [ -n "$INIT_BOOT_PART" ] && [ -b "$INIT_BOOT_PART" ]; then
         echo "Backing up init_boot partition from $INIT_BOOT_PART"
-        dd if="$INIT_BOOT_PART" of="$BACKUP_DIR/partitions/init_boot${SLOT}.img" bs=4096 2>&1
-        if [ $? -eq 0 ]; then
-            echo "Init_boot partition backed up successfully"
+        # Check available space
+        PART_SIZE=$(blockdev --getsize64 "$INIT_BOOT_PART" 2>/dev/null || echo "0")
+        if [ "$PART_SIZE" -gt 0 ]; then
+            dd if="$INIT_BOOT_PART" of="$BACKUP_DIR/partitions/init_boot${SLOT}.img" bs=4096 conv=fsync 2>&1
+            if [ $? -eq 0 ]; then
+                sync
+                echo "Init_boot partition backed up successfully"
+            else
+                echo "Failed to backup init_boot partition"
+            fi
         else
-            echo "Failed to backup init_boot partition"
+            echo "Unable to determine init_boot partition size"
         fi
     else
         echo "Init_boot partition not found (may not exist on this device)"
@@ -82,13 +96,20 @@ perform_backup() {
     
     # Backup recovery partition
     RECOVERY_PART=$(find_partition "recovery")
-    if [ -n "$RECOVERY_PART" ]; then
+    if [ -n "$RECOVERY_PART" ] && [ -b "$RECOVERY_PART" ]; then
         echo "Backing up recovery partition from $RECOVERY_PART"
-        dd if="$RECOVERY_PART" of="$BACKUP_DIR/partitions/recovery.img" bs=4096 2>&1
-        if [ $? -eq 0 ]; then
-            echo "Recovery partition backed up successfully"
+        # Check available space
+        PART_SIZE=$(blockdev --getsize64 "$RECOVERY_PART" 2>/dev/null || echo "0")
+        if [ "$PART_SIZE" -gt 0 ]; then
+            dd if="$RECOVERY_PART" of="$BACKUP_DIR/partitions/recovery.img" bs=4096 conv=fsync 2>&1
+            if [ $? -eq 0 ]; then
+                sync
+                echo "Recovery partition backed up successfully"
+            else
+                echo "Failed to backup recovery partition"
+            fi
         else
-            echo "Failed to backup recovery partition"
+            echo "Unable to determine recovery partition size"
         fi
     else
         echo "Recovery partition not found (may not exist on this device)"

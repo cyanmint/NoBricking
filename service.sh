@@ -22,8 +22,5 @@ echo "Boot attempt at $TIMESTAMP" > "$FLAG_FILE"
 # Log the boot attempt
 echo "$(date): Boot attempt flag created: $FLAG_FILE" >> "$BACKUP_DIR/boot.log"
 
-# Schedule boot completion check in background
-(
-    sleep 60
-    sh "$MODDIR/boot-completed.sh"
-) &
+# Schedule boot completion check in background with nohup to avoid orphaned processes
+nohup sh "$MODDIR/boot-completed.sh" >/dev/null 2>&1 &

@@ -19,15 +19,16 @@ is_data_decrypted() {
     return 1
 }
 
-# Wait for /data to be decrypted (max 5 minutes)
-MAX_WAIT=60
+# Wait for /data to be decrypted (max 10 minutes for slower devices)
+MAX_WAIT=120
 WAIT_COUNT=0
 while ! is_data_decrypted; do
     sleep 5
     WAIT_COUNT=$((WAIT_COUNT + 1))
     if [ $WAIT_COUNT -ge $MAX_WAIT ]; then
-        echo "$(date): Timeout waiting for /data decrypt" >> "$BACKUP_DIR/boot.log"
-        exit 1
+        echo "$(date): Timeout waiting for /data decrypt, will retry on next boot" >> "$BACKUP_DIR/boot.log"
+        # Don't exit with error, just log and return - flags will persist for next attempt
+        exit 0
     fi
 done
 
