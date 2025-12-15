@@ -28,6 +28,27 @@ find_partition() {
     echo "$part"
 }
 
+# Function to find boot partition with fallback logic
+find_boot_partition() {
+    local slot=$1
+    local part_type=$2  # "boot" or "init_boot"
+    
+    # Try with slot suffix first
+    local part=$(find_partition "${part_type}${slot}")
+    
+    # Fallback to _a suffix
+    if [ -z "$part" ]; then
+        part=$(find_partition "${part_type}_a")
+    fi
+    
+    # Fallback to no suffix (non-A/B device or recovery)
+    if [ -z "$part" ]; then
+        part=$(find_partition "${part_type}")
+    fi
+    
+    echo "$part"
+}
+
 # Function to perform backup
 perform_backup() {
     echo "Starting backup process..."
@@ -39,13 +60,7 @@ perform_backup() {
     mkdir -p "$BACKUP_DIR/modules"
     
     # Backup boot partition
-    BOOT_PART=$(find_partition "boot${SLOT}")
-    if [ -z "$BOOT_PART" ]; then
-        BOOT_PART=$(find_partition "boot_a")
-        if [ -z "$BOOT_PART" ]; then
-            BOOT_PART=$(find_partition "boot")
-        fi
-    fi
+    BOOT_PART=$(find_boot_partition "$SLOT" "boot")
     
     if [ -n "$BOOT_PART" ] && [ -b "$BOOT_PART" ]; then
         echo "Backing up boot partition from $BOOT_PART"
@@ -67,13 +82,7 @@ perform_backup() {
     fi
     
     # Backup init_boot partition (if it exists)
-    INIT_BOOT_PART=$(find_partition "init_boot${SLOT}")
-    if [ -z "$INIT_BOOT_PART" ]; then
-        INIT_BOOT_PART=$(find_partition "init_boot_a")
-        if [ -z "$INIT_BOOT_PART" ]; then
-            INIT_BOOT_PART=$(find_partition "init_boot")
-        fi
-    fi
+    INIT_BOOT_PART=$(find_boot_partition "$SLOT" "init_boot")
     
     if [ -n "$INIT_BOOT_PART" ] && [ -b "$INIT_BOOT_PART" ]; then
         echo "Backing up init_boot partition from $INIT_BOOT_PART"

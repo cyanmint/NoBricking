@@ -20,6 +20,7 @@ is_data_decrypted() {
 }
 
 # Wait for /data to be decrypted (max 10 minutes for slower devices)
+# 120 iterations * 5 seconds = 600 seconds = 10 minutes
 MAX_WAIT=120
 WAIT_COUNT=0
 while ! is_data_decrypted; do

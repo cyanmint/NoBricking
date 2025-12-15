@@ -36,9 +36,18 @@ restore_backups() {
     # Restore boot partition
     if [ -f "$BACKUP_DIR/partitions/boot${SLOT}.img" ]; then
         echo "$(date): Restoring boot partition" >> "$BACKUP_DIR/restore.log"
-        BOOT_PART=$(find /dev/block -name "boot${SLOT}" -o -name "boot_[ab]" 2>/dev/null | grep "${SLOT}" | head -n1)
-        if [ -z "$BOOT_PART" ]; then
-            BOOT_PART=$(find /dev/block/by-name -name "boot${SLOT}" -o -name "boot_[ab]" 2>/dev/null | grep "${SLOT}" | head -n1)
+        # Find boot partition - handle both A/B and non-A/B devices
+        if [ -n "$SLOT" ]; then
+            BOOT_PART=$(find /dev/block -name "boot${SLOT}" -o -name "boot_[ab]" 2>/dev/null | grep "${SLOT}" | head -n1)
+            if [ -z "$BOOT_PART" ]; then
+                BOOT_PART=$(find /dev/block/by-name -name "boot${SLOT}" -o -name "boot_[ab]" 2>/dev/null | grep "${SLOT}" | head -n1)
+            fi
+        else
+            # Non-A/B device
+            BOOT_PART=$(find /dev/block -name "boot" 2>/dev/null | head -n1)
+            if [ -z "$BOOT_PART" ]; then
+                BOOT_PART=$(find /dev/block/by-name -name "boot" 2>/dev/null | head -n1)
+            fi
         fi
         if [ -n "$BOOT_PART" ] && [ -b "$BOOT_PART" ]; then
             dd if="$BACKUP_DIR/partitions/boot${SLOT}.img" of="$BOOT_PART" bs=4096 conv=fsync
@@ -54,9 +63,18 @@ restore_backups() {
     # Restore init_boot partition if exists
     if [ -f "$BACKUP_DIR/partitions/init_boot${SLOT}.img" ]; then
         echo "$(date): Restoring init_boot partition" >> "$BACKUP_DIR/restore.log"
-        INIT_BOOT_PART=$(find /dev/block -name "init_boot${SLOT}" -o -name "init_boot_[ab]" 2>/dev/null | grep "${SLOT}" | head -n1)
-        if [ -z "$INIT_BOOT_PART" ]; then
-            INIT_BOOT_PART=$(find /dev/block/by-name -name "init_boot${SLOT}" -o -name "init_boot_[ab]" 2>/dev/null | grep "${SLOT}" | head -n1)
+        # Find init_boot partition - handle both A/B and non-A/B devices
+        if [ -n "$SLOT" ]; then
+            INIT_BOOT_PART=$(find /dev/block -name "init_boot${SLOT}" -o -name "init_boot_[ab]" 2>/dev/null | grep "${SLOT}" | head -n1)
+            if [ -z "$INIT_BOOT_PART" ]; then
+                INIT_BOOT_PART=$(find /dev/block/by-name -name "init_boot${SLOT}" -o -name "init_boot_[ab]" 2>/dev/null | grep "${SLOT}" | head -n1)
+            fi
+        else
+            # Non-A/B device
+            INIT_BOOT_PART=$(find /dev/block -name "init_boot" 2>/dev/null | head -n1)
+            if [ -z "$INIT_BOOT_PART" ]; then
+                INIT_BOOT_PART=$(find /dev/block/by-name -name "init_boot" 2>/dev/null | head -n1)
+            fi
         fi
         if [ -n "$INIT_BOOT_PART" ] && [ -b "$INIT_BOOT_PART" ]; then
             dd if="$BACKUP_DIR/partitions/init_boot${SLOT}.img" of="$INIT_BOOT_PART" bs=4096 conv=fsync
