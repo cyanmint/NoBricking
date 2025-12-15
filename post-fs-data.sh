@@ -1,0 +1,136 @@
+#!/system/bin/sh
+# NoBricking Post-FS-Data Script - Runs early in boot process
+
+MODDIR="${0%/*}"
+BACKUP_DIR="/data/adb/nobricking_backups"
+FLAG_DIR="$BACKUP_DIR/flags"
+RESTORE_FLAG="$BACKUP_DIR/.restore_attempted"
+
+# Function to count flag files
+count_flags() {
+    if [ -d "$FLAG_DIR" ]; then
+        ls -1 "$FLAG_DIR"/*.flag 2>/dev/null | wc -l
+    else
+        echo "0"
+    fi
+}
+
+# Function to get active slot
+get_active_slot() {
+    local slot=$(getprop ro.boot.slot_suffix)
+    if [ -z "$slot" ]; then
+        slot=$(getprop ro.boot.slot)
+        if [ -n "$slot" ]; then
+            slot="_${slot}"
+        fi
+    fi
+    echo "$slot"
+}
+
+# Function to restore backups
+restore_backups() {
+    echo "$(date): Starting restore process" >> "$BACKUP_DIR/restore.log"
+    
+    SLOT=$(get_active_slot)
+    
+    # Restore boot partition
+    if [ -f "$BACKUP_DIR/partitions/boot${SLOT}.img" ]; then
+        echo "$(date): Restoring boot partition" >> "$BACKUP_DIR/restore.log"
+        BOOT_PART=$(find /dev/block -name "boot${SLOT}" -o -name "boot_[ab]" 2>/dev/null | grep "${SLOT}" | head -n1)
+        if [ -z "$BOOT_PART" ]; then
+            BOOT_PART=$(find /dev/block/by-name -name "boot${SLOT}" -o -name "boot_[ab]" 2>/dev/null | grep "${SLOT}" | head -n1)
+        fi
+        if [ -n "$BOOT_PART" ]; then
+            dd if="$BACKUP_DIR/partitions/boot${SLOT}.img" of="$BOOT_PART" bs=4096
+            echo "$(date): Boot partition restored to $BOOT_PART" >> "$BACKUP_DIR/restore.log"
+        fi
+    fi
+    
+    # Restore init_boot partition if exists
+    if [ -f "$BACKUP_DIR/partitions/init_boot${SLOT}.img" ]; then
+        echo "$(date): Restoring init_boot partition" >> "$BACKUP_DIR/restore.log"
+        INIT_BOOT_PART=$(find /dev/block -name "init_boot${SLOT}" -o -name "init_boot_[ab]" 2>/dev/null | grep "${SLOT}" | head -n1)
+        if [ -z "$INIT_BOOT_PART" ]; then
+            INIT_BOOT_PART=$(find /dev/block/by-name -name "init_boot${SLOT}" -o -name "init_boot_[ab]" 2>/dev/null | grep "${SLOT}" | head -n1)
+        fi
+        if [ -n "$INIT_BOOT_PART" ]; then
+            dd if="$BACKUP_DIR/partitions/init_boot${SLOT}.img" of="$INIT_BOOT_PART" bs=4096
+            echo "$(date): Init_boot partition restored to $INIT_BOOT_PART" >> "$BACKUP_DIR/restore.log"
+        fi
+    fi
+    
+    # Restore recovery partition
+    if [ -f "$BACKUP_DIR/partitions/recovery.img" ]; then
+        echo "$(date): Restoring recovery partition" >> "$BACKUP_DIR/restore.log"
+        RECOVERY_PART=$(find /dev/block -name "recovery" 2>/dev/null | head -n1)
+        if [ -z "$RECOVERY_PART" ]; then
+            RECOVERY_PART=$(find /dev/block/by-name -name "recovery" 2>/dev/null | head -n1)
+        fi
+        if [ -n "$RECOVERY_PART" ]; then
+            dd if="$BACKUP_DIR/partitions/recovery.img" of="$RECOVERY_PART" bs=4096
+            echo "$(date): Recovery partition restored to $RECOVERY_PART" >> "$BACKUP_DIR/restore.log"
+        fi
+    fi
+    
+    # Restore module list
+    if [ -f "$BACKUP_DIR/modules/module_list.txt" ]; then
+        echo "$(date): Restoring module states" >> "$BACKUP_DIR/restore.log"
+        
+        # Disable all modules first
+        if [ -n "$KSU" ]; then
+            MODULE_DIR="/data/adb/ksu/modules"
+        else
+            MODULE_DIR="/data/adb/modules"
+        fi
+        
+        # Create disable files for all modules except nobricking
+        for mod in "$MODULE_DIR"/*; do
+            if [ -d "$mod" ]; then
+                modname=$(basename "$mod")
+                if [ "$modname" != "nobricking" ]; then
+                    touch "$mod/disable"
+                fi
+            fi
+        done
+        
+        # Re-enable modules from backup list
+        while IFS= read -r modname; do
+            if [ -d "$MODULE_DIR/$modname" ]; then
+                rm -f "$MODULE_DIR/$modname/disable"
+                echo "$(date): Enabled module: $modname" >> "$BACKUP_DIR/restore.log"
+            fi
+        done < "$BACKUP_DIR/modules/module_list.txt"
+    fi
+    
+    # Mark that restore was attempted
+    touch "$RESTORE_FLAG"
+    echo "$(date): Restore process completed" >> "$BACKUP_DIR/restore.log"
+    
+    # Clear all flags after restore
+    rm -f "$FLAG_DIR"/*.flag
+    
+    # Reboot to apply changes
+    echo "$(date): Rebooting device" >> "$BACKUP_DIR/restore.log"
+    reboot
+}
+
+# Main logic
+mkdir -p "$FLAG_DIR"
+
+# Check if restore was already attempted
+if [ -f "$RESTORE_FLAG" ]; then
+    echo "$(date): Restore already attempted, skipping" >> "$BACKUP_DIR/boot.log"
+    # Remove restore flag after one successful boot
+    rm -f "$RESTORE_FLAG"
+    exit 0
+fi
+
+# Count existing flags
+FLAG_COUNT=$(count_flags)
+echo "$(date): Flag count: $FLAG_COUNT" >> "$BACKUP_DIR/boot.log"
+
+# If 3 or more flags exist, restore backups
+if [ "$FLAG_COUNT" -ge 3 ]; then
+    echo "$(date): CRITICAL: 3+ boot failures detected!" >> "$BACKUP_DIR/boot.log"
+    restore_backups
+fi
