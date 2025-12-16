@@ -1,8 +1,14 @@
 # Changelog
 
+## Version 1.0.1
+
+### Bug Fixes
+- Removed WebUI to fix KSU installation errors
+- WebUI will be re-added in a future release with proper KSU integration
+
 ## Version 1.1.0
 
-### New Features
+### New Features (REMOVED in 1.0.1 due to installation issues)
 - **Web UI for KSU**: Added intuitive web-based management interface for KernelSU users
   - Real-time status monitoring (boot flags, backup information)
   - One-click backup creation

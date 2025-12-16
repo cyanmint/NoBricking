@@ -10,7 +10,6 @@ A Magisk/KernelSU module that automatically protects your device from bricking b
 - **Boot Failure Detection**: Monitors boot attempts using flag files
 - **Automatic Recovery**: Restores backups after 3 consecutive failed boot attempts
 - **Manual Backup**: Trigger backups anytime via the action button in Magisk/KSU Manager
-- **Web UI Management** (KSU only): Manage backups through an intuitive web interface in KernelSU Manager
 - **Wide Compatibility**: Supports Magisk, KernelSU, and variants (APatch, Sukisu Ultra, etc.)
 
 ## How It Works
@@ -60,22 +59,6 @@ To create a backup at any time:
 - Updating system
 - Making kernel changes
 - Flashing major modifications
-
-### Web UI (KSU Only)
-For KernelSU users, manage backups through the intuitive web interface:
-1. Open KernelSU Manager
-2. Go to Modules
-3. Find "NoBricking"
-4. Tap to open the module's WebUI
-5. View status, create backups, clear flags, and restore from the browser
-
-**WebUI Features**:
-- 📊 Real-time system status (boot flags, backup info)
-- 🔧 One-click backup creation
-- 🧹 Clear boot flags manually
-- 💾 View backup details and sizes
-- 🔄 Restore from backup with confirmation
-- 📝 Activity log for all operations
 
 ## File Structure
 
