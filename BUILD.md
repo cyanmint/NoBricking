@@ -4,17 +4,10 @@
 
 To create a flashable ZIP for Magisk/KernelSU:
 
-### Method 1: Using git archive (Recommended)
+### Recommended Method: Manual ZIP with Required Files Only
 
 ```bash
-# From repository root
-git archive --format=zip --output=NoBricking-v1.0.0.zip HEAD
-```
-
-### Method 2: Manual ZIP creation
-
-```bash
-# Create ZIP with required files
+# Create ZIP with ONLY the necessary module files
 zip -r NoBricking.zip \
     module.prop \
     customize.sh \
@@ -23,25 +16,24 @@ zip -r NoBricking.zip \
     action.sh \
     boot-completed.sh \
     uninstall.sh \
-    README.md
+    update.json
 ```
 
-### Method 3: Using command line tools
+**Important:** Do NOT include documentation files (README.md, BUILD.md, CHANGELOG.md, etc.) in the module ZIP as they can interfere with KSU module detection.
+
+### Alternative: Using excludes
 
 ```bash
-# On Linux/macOS
-zip -r NoBricking.zip . -x '*.git*' '.gitignore' 'CHANGELOG.md' 'SECURITY.md' 'WORKFLOW.md' 'BUILD.md' 'update.json'
-
-# Or with more control
-zip -r NoBricking.zip \
-    module.prop \
-    customize.sh \
-    service.sh \
-    post-fs-data.sh \
-    action.sh \
-    boot-completed.sh \
-    uninstall.sh \
-    README.md
+# On Linux/macOS - exclude documentation and git files
+zip -r NoBricking.zip . \
+    -x '*.git*' \
+    -x '.gitignore' \
+    -x 'README.md' \
+    -x 'CHANGELOG.md' \
+    -x 'SECURITY.md' \
+    -x 'WORKFLOW.md' \
+    -x 'BUILD.md' \
+    -x 'IMPLEMENTATION.md'
 ```
 
 ## Required Files in ZIP

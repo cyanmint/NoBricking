@@ -1,5 +1,17 @@
 # Changelog
 
+## Version 1.0.4
+
+### Bug Fixes
+- **Fixed KSU module visibility**: Module now properly shows in KernelSU Manager
+  - Removed `SKIPUNZIP=1` from customize.sh which was causing installation issues
+  - Previously, ALL files from ZIP were extracted to module directory, including documentation
+  - KSU Manager couldn't properly detect the module with extra files present
+  - Module now installs cleanly with only necessary runtime files
+- **Updated build instructions**: Documented correct way to create module ZIP for KSU compatibility
+  - Only include essential module files (no README.md, BUILD.md, etc. in the ZIP)
+  - This ensures clean installation and proper module detection
+
 ## Version 1.0.3
 
 ### Changes

@@ -1,7 +1,6 @@
 #!/system/bin/sh
 # NoBricking Module Installation Script
 
-SKIPUNZIP=1
 MODPATH="${0%/*}"
 
 # Detect Magisk/KSU
@@ -17,11 +16,7 @@ else
 fi
 
 ui_print "- Installing NoBricking Module"
-ui_print "- Version: 1.0.3"
-
-# Extract module files
-ui_print "- Extracting module files"
-unzip -o "$ZIPFILE" -d $MODPATH >&2
+ui_print "- Version: 1.0.4"
 
 # Set permissions
 ui_print "- Setting permissions"
