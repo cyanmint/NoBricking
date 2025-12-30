@@ -4,13 +4,18 @@ let autoRefreshInterval = null;
 
 // Initialize app
 document.addEventListener('DOMContentLoaded', async () => {
-    addLog('Initializing NoBricking Manager...', 'success');
+    // Wait for i18n to initialize
+    if (typeof i18n !== 'undefined') {
+        i18n.init();
+    }
+    
+    addLog(i18n.t('initialized'), 'success');
     
     if (!KSU.isAvailable) {
-        addLog('Warning: KSU API not available. Some features may not work.', 'error');
-        showAlert('KSU API not detected. Please open this page from KSU Manager.', 'warning');
+        addLog(i18n.t('ksuApiWarning'), 'error');
+        showAlert(i18n.t('ksuNotDetected'), 'warning');
     } else {
-        addLog('KSU API detected and ready', 'success');
+        addLog(i18n.t('ksuDetected'), 'success');
     }
     
     // Load module version
@@ -26,7 +31,17 @@ document.addEventListener('DOMContentLoaded', async () => {
     // Start auto-refresh
     startAutoRefresh();
     
-    addLog('Initialization complete', 'success');
+    addLog(i18n.t('initComplete'), 'success');
+    
+    // Listen for language changes
+    window.addEventListener('languageChanged', () => {
+        // Refresh current page content
+        if (currentPage === 'backups') {
+            loadBackups();
+        } else if (currentPage === 'flags') {
+            loadFlags();
+        }
+    });
 });
 
 // Navigation
@@ -398,3 +413,43 @@ function startAutoRefresh() {
         }
     }, 30000); // Refresh every 30 seconds
 }
+
+// Update docs iframe when language changes
+window.addEventListener('languageChanged', (e) => {
+    const docsIframe = document.getElementById('docsFrame');
+    if (docsIframe && currentPage === 'docs') {
+        const lang = e.detail.lang;
+        let docsPath = 'docs/';
+        
+        // Map language codes to docs paths
+        if (lang === 'zh-CN' || lang === 'zh-TW' || lang.startsWith('zh')) {
+            docsPath = 'docs/#/zh-CN/';
+        } else {
+            docsPath = 'docs/';
+        }
+        
+        docsIframe.src = docsPath;
+    }
+});
+
+// Update loadDocs function to respect current language
+const originalLoadDocs = loadDocs;
+loadDocs = function() {
+    const lang = i18n.currentLang;
+    const docsFrame = document.getElementById('docsFrame');
+    
+    if (!docsFrame) {
+        // Original function creates iframe, let it run first
+        if (typeof originalLoadDocs === 'function') {
+            originalLoadDocs();
+        }
+        return;
+    }
+    
+    let docsPath = 'docs/';
+    if (lang === 'zh-CN' || lang === 'zh-TW' || lang.startsWith('zh')) {
+        docsPath = 'docs/#/zh-CN/';
+    }
+    
+    docsFrame.src = docsPath;
+};

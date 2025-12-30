@@ -1,7 +1,7 @@
 id=nobricking
 name=NoBricking
-version=1.1.0
-versionCode=7
+version=1.2.0
+versionCode=8
 author=cyanmint
-description=Anti-bricking module with advanced WebUI for backup management
+description=Anti-bricking module with multilingual WebUI (20+ languages) for backup management
 updateJson=https://raw.githubusercontent.com/cyanmint/NoBricking/main/update.json

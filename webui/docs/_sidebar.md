@@ -1,7 +1,12 @@
-- [Home](README.md)
-- [Changelog](CHANGELOG.md)
-- [Build Instructions](BUILD.md)
-- [Security](SECURITY.md)
-- [Workflow](WORKFLOW.md)
-- [Implementation](IMPLEMENTATION.md)
-- [Copying](copying.txt)
+- Getting Started
+  - [Overview](README.md)
+  - [Changelog](CHANGELOG.md)
+
+- Technical Docs
+  - [Build Instructions](BUILD.md)
+  - [Implementation](IMPLEMENTATION.md)
+  - [Workflow](WORKFLOW.md)
+
+- More
+  - [Security](SECURITY.md)
+  - [License](copying.txt)

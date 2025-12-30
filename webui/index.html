@@ -8,6 +8,7 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <title>NoBricking Manager</title>
     <link rel="stylesheet" href="assets/css/app.css">
+    <script src="assets/js/i18n.js"></script>
 </head>
 <body>
     <!-- Navigation Bar -->
@@ -26,34 +27,39 @@
     <!-- Side Menu -->
     <div class="side-menu" id="sideMenu">
         <div class="menu-header">
-            <h2>Menu</h2>
+            <h2 data-i18n="menu">Menu</h2>
             <button class="close-menu" onclick="toggleMenu()">×</button>
         </div>
         <div class="menu-items">
             <a href="#" class="menu-item active" data-page="dashboard" onclick="navigateTo('dashboard')">
                 <span class="menu-icon">📊</span>
-                <span>Dashboard</span>
+                <span data-i18n="dashboard">Dashboard</span>
             </a>
             <a href="#" class="menu-item" data-page="backups" onclick="navigateTo('backups')">
                 <span class="menu-icon">💾</span>
-                <span>Backups</span>
+                <span data-i18n="backups">Backups</span>
             </a>
             <a href="#" class="menu-item" data-page="flags" onclick="navigateTo('flags')">
                 <span class="menu-icon">🚩</span>
-                <span>Boot Flags</span>
+                <span data-i18n="bootFlags">Boot Flags</span>
             </a>
             <a href="#" class="menu-item" data-page="restore" onclick="navigateTo('restore')">
                 <span class="menu-icon">🔄</span>
-                <span>Restore Settings</span>
+                <span data-i18n="restoreSettings">Restore Settings</span>
             </a>
             <a href="#" class="menu-item" data-page="docs" onclick="navigateTo('docs')">
                 <span class="menu-icon">📚</span>
-                <span>Documentation</span>
+                <span data-i18n="documentation">Documentation</span>
             </a>
             <a href="#" class="menu-item" data-page="about" onclick="navigateTo('about')">
                 <span class="menu-icon">ℹ️</span>
-                <span>About</span>
+                <span data-i18n="about">About</span>
             </a>
+            <div class="menu-divider"></div>
+            <div class="menu-lang-selector">
+                <span class="menu-icon">🌍</span>
+                <select id="languageSelector" class="lang-select"></select>
+            </div>
         </div>
     </div>
 
@@ -65,11 +71,10 @@
         <!-- Dashboard Page -->
         <div class="page active" id="dashboard-page">
             <div class="page-header">
-                <h1>Dashboard</h1>
+                <h1 data-i18n="dashboard">Dashboard</h1>
                 <button class="btn btn-primary" onclick="refreshAll()">
                     <span class="btn-icon">🔄</span>
-                    Refresh
-                </button>
+                    <span data-i18n="refresh">Refresh</span></button>
             </div>
 
             <!-- Status Cards -->
@@ -77,21 +82,21 @@
                 <div class="status-card">
                     <div class="card-icon">🚩</div>
                     <div class="card-content">
-                        <div class="card-label">Boot Flags</div>
+                        <div class="card-label" data-i18n="bootFlagsCount">Boot Flags</div>
                         <div class="card-value" id="flagCount">-</div>
                     </div>
                 </div>
                 <div class="status-card">
                     <div class="card-icon">💾</div>
                     <div class="card-content">
-                        <div class="card-label">Total Backups</div>
+                        <div class="card-label" data-i18n="totalBackups">Total Backups</div>
                         <div class="card-value" id="backupCount">-</div>
                     </div>
                 </div>
                 <div class="status-card">
                     <div class="card-icon">📅</div>
                     <div class="card-content">
-                        <div class="card-label">Last Backup</div>
+                        <div class="card-label" data-i18n="lastBackup">Last Backup</div>
                         <div class="card-value" id="lastBackup">-</div>
                     </div>
                 </div>

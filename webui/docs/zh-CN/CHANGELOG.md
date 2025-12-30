@@ -1,36 +1,5 @@
 # Changelog
 
-## Version 1.2.0 (2024-12-30)
-
-### New Features
-- **🌍 Internationalization (i18n) Support**
-  - Support for 20+ languages in WebUI
-  - Automatic language detection based on browser settings
-  - Manual language selection via dropdown menu
-  - Supported languages:
-    - English, Chinese (Simplified/Traditional), Japanese, Korean
-    - Spanish, French, German, Russian, Portuguese, Italian
-    - Arabic, Hindi, Turkish, Vietnamese, Thai
-    - Indonesian, Malay, Polish, Dutch
-  - **📚 Multilingual Documentation**
-    - Documentation available in multiple languages
-    - Language-specific Docsify navigation
-    - Automatic docs language switching
-    - Chinese (Simplified) documentation fully translated
-
-### Improvements
-- Enhanced WebUI user experience with native language support
-- Language preference persists across sessions
-- Improved accessibility for non-English speakers
-- Updated module description to highlight multilingual support
-
-### Technical Changes
-- Added `i18n.js` internationalization system
-- Updated HTML with `data-i18n` attributes for translation
-- Created language-specific documentation structure
-- Docsify configured for multi-language support
-- CSS improvements for language selector styling
-
 ## Version 1.1.0
 
 ### New Features

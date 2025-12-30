@@ -1,3 +1,10 @@
+#!/bin/bash
+# Script to create i18n documentation structure
+
+cd webui/docs
+
+# Create Docsify HTML with i18n support
+cat > index.html << 'EOFHTML'
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -50,3 +57,32 @@
   <script src="https://cdn.jsdelivr.net/npm/prismjs@1/components/prism-bash.min.js"></script>
 </body>
 </html>
+EOFHTML
+
+# Create English sidebar
+cat > _sidebar.md << 'EOFSIDEBAR'
+- Getting Started
+  - [Overview](README.md)
+  - [Changelog](CHANGELOG.md)
+
+- Technical Docs
+  - [Build Instructions](BUILD.md)
+  - [Implementation](IMPLEMENTATION.md)
+  - [Workflow](WORKFLOW.md)
+
+- More
+  - [Security](SECURITY.md)
+  - [License](copying.txt)
+EOFSIDEBAR
+
+# Copy existing docs to create Chinese versions (simplified for script)
+for file in CHANGELOG BUILD IMPLEMENTATION WORKFLOW SECURITY; do
+  if [ ! -f "zh-CN/${file}.md" ]; then
+    cp "${file}.md" "zh-CN/${file}.md" 2>/dev/null || echo "# ${file}" > "zh-CN/${file}.md"
+  fi
+done
+
+# Copy license
+cp copying.txt zh-CN/copying.txt 2>/dev/null || echo "GPLv3" > zh-CN/copying.txt
+
+echo "i18n documentation structure created successfully!"
