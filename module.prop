@@ -1,7 +1,7 @@
 id=nobricking
 name=NoBricking
-version=1.0.4
-versionCode=6
+version=1.1.0
+versionCode=7
 author=cyanmint
-description=Anti-bricking module that automatically backs up and restores boot partitions when device fails to boot properly
+description=Anti-bricking module with advanced WebUI for backup management
 updateJson=https://raw.githubusercontent.com/cyanmint/NoBricking/main/update.json

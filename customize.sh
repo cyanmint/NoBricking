@@ -16,7 +16,7 @@ else
 fi
 
 ui_print "- Installing NoBricking Module"
-ui_print "- Version: 1.0.4"
+ui_print "- Version: 1.1.0"
 
 # Set permissions
 ui_print "- Setting permissions"

@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <title>NoBricking Manager</title>
+    <link rel="stylesheet" href="assets/css/app.css">
+</head>
+<body>
+    <!-- Navigation Bar -->
+    <nav class="navbar">
+        <div class="nav-content">
+            <div class="nav-title">
+                <span class="nav-icon">🛡️</span>
+                <span class="nav-text">NoBricking</span>
+            </div>
+            <button class="nav-menu-btn" onclick="toggleMenu()">
+                <span class="menu-icon">☰</span>
+            </button>
+        </div>
+    </nav>
+
+    <!-- Side Menu -->
+    <div class="side-menu" id="sideMenu">
+        <div class="menu-header">
+            <h2>Menu</h2>
+            <button class="close-menu" onclick="toggleMenu()">×</button>
+        </div>
+        <div class="menu-items">
+            <a href="#" class="menu-item active" data-page="dashboard" onclick="navigateTo('dashboard')">
+                <span class="menu-icon">📊</span>
+                <span>Dashboard</span>
+            </a>
+            <a href="#" class="menu-item" data-page="backups" onclick="navigateTo('backups')">
+                <span class="menu-icon">💾</span>
+                <span>Backups</span>
+            </a>
+            <a href="#" class="menu-item" data-page="flags" onclick="navigateTo('flags')">
+                <span class="menu-icon">🚩</span>
+                <span>Boot Flags</span>
+            </a>
+            <a href="#" class="menu-item" data-page="restore" onclick="navigateTo('restore')">
+                <span class="menu-icon">🔄</span>
+                <span>Restore Settings</span>
+            </a>
+            <a href="#" class="menu-item" data-page="docs" onclick="navigateTo('docs')">
+                <span class="menu-icon">📚</span>
+                <span>Documentation</span>
+            </a>
+            <a href="#" class="menu-item" data-page="about" onclick="navigateTo('about')">
+                <span class="menu-icon">ℹ️</span>
+                <span>About</span>
+            </a>
+        </div>
+    </div>
+
+    <!-- Overlay -->
+    <div class="overlay" id="overlay" onclick="toggleMenu()"></div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <!-- Dashboard Page -->
+        <div class="page active" id="dashboard-page">
+            <div class="page-header">
+                <h1>Dashboard</h1>
+                <button class="btn btn-primary" onclick="refreshAll()">
+                    <span class="btn-icon">🔄</span>
+                    Refresh
+                </button>
+            </div>
+
+            <!-- Status Cards -->
+            <div class="status-cards">
+                <div class="status-card">
+                    <div class="card-icon">🚩</div>
+                    <div class="card-content">
+                        <div class="card-label">Boot Flags</div>
+                        <div class="card-value" id="flagCount">-</div>
+                    </div>
+                </div>
+                <div class="status-card">
+                    <div class="card-icon">💾</div>
+                    <div class="card-content">
+                        <div class="card-label">Total Backups</div>
+                        <div class="card-value" id="backupCount">-</div>
+                    </div>
+                </div>
+                <div class="status-card">
+                    <div class="card-icon">📅</div>
+                    <div class="card-content">
+                        <div class="card-label">Last Backup</div>
+                        <div class="card-value" id="lastBackup">-</div>
+                    </div>
+                </div>
+                <div class="status-card">
+                    <div class="card-icon">💽</div>
+                    <div class="card-content">
+                        <div class="card-label">Backup Size</div>
+                        <div class="card-value" id="backupSize">-</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quick Actions -->
+            <div class="section">
+                <h2 class="section-title">Quick Actions</h2>
+                <div class="action-grid">
+                    <button class="action-btn" onclick="createBackup()">
+                        <span class="action-icon">➕</span>
+                        <span class="action-text">Create Backup</span>
+                    </button>
+                    <button class="action-btn" onclick="clearFlags()">
+                        <span class="action-icon">🧹</span>
+                        <span class="action-text">Clear Flags</span>
+                    </button>
+                    <button class="action-btn" onclick="navigateTo('restore')">
+                        <span class="action-icon">⚙️</span>
+                        <span class="action-text">Configure Restore</span>
+                    </button>
+                    <button class="action-btn action-btn-danger" onclick="confirmRestore()">
+                        <span class="action-icon">🔄</span>
+                        <span class="action-text">Restore Now</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Activity Log -->
+            <div class="section">
+                <h2 class="section-title">Recent Activity</h2>
+                <div class="activity-log" id="activityLog">
+                    <div class="log-entry">
+                        <span class="log-time">Starting...</span>
+                        <span class="log-message">Initializing NoBricking Manager</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Backups Page -->
+        <div class="page" id="backups-page">
+            <div class="page-header">
+                <h1>Backup Management</h1>
+                <button class="btn btn-primary" onclick="createBackup()">
+                    <span class="btn-icon">➕</span>
+                    New Backup
+                </button>
+            </div>
+
+            <!-- Active Backup Selection -->
+            <div class="section">
+                <h2 class="section-title">Active Backup Configuration</h2>
+                <div class="info-box">
+                    <p>Select which backup will be used for automatic restoration if a brick is detected.</p>
+                </div>
+                <div class="form-group">
+                    <label for="activeBackupSelect">Active Backup:</label>
+                    <select id="activeBackupSelect" class="select-input" onchange="setActiveBackup()">
+                        <option value="latest">Latest Backup (Default)</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Backup List -->
+            <div class="section">
+                <h2 class="section-title">All Backups</h2>
+                <div id="backupList" class="backup-list">
+                    <div class="empty-state">
+                        <div class="empty-icon">📦</div>
+                        <div class="empty-text">Loading backups...</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Flags Page -->
+        <div class="page" id="flags-page">
+            <div class="page-header">
+                <h1>Boot Flags</h1>
+                <button class="btn btn-danger" onclick="clearFlags()">
+                    <span class="btn-icon">🧹</span>
+                    Clear All Flags
+                </button>
+            </div>
+
+            <div class="info-box warning">
+                <strong>⚠️ Boot Flag System</strong>
+                <p>Boot flags track boot attempts. When 3 or more flags are detected, the system is considered bricked and automatic restoration will trigger.</p>
+            </div>
+
+            <div class="section">
+                <h2 class="section-title">Current Flags</h2>
+                <div id="flagList" class="flag-list">
+                    <div class="empty-state">
+                        <div class="empty-icon">🏁</div>
+                        <div class="empty-text">Loading flags...</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Restore Settings Page -->
+        <div class="page" id="restore-page">
+            <div class="page-header">
+                <h1>Restore Settings</h1>
+                <button class="btn btn-primary" onclick="saveRestoreSettings()">
+                    <span class="btn-icon">💾</span>
+                    Save Settings
+                </button>
+            </div>
+
+            <div class="info-box">
+                <p>Configure what gets restored when automatic recovery is triggered. Uncheck items you want to exclude from restoration.</p>
+            </div>
+
+            <div class="section">
+                <h2 class="section-title">Partition Restore Options</h2>
+                <div class="settings-list">
+                    <label class="checkbox-item">
+                        <input type="checkbox" id="restore_boot" checked>
+                        <span class="checkbox-label">
+                            <strong>Boot Partition</strong>
+                            <small>Contains kernel and ramdisk</small>
+                        </span>
+                    </label>
+                    <label class="checkbox-item">
+                        <input type="checkbox" id="restore_init_boot" checked>
+                        <span class="checkbox-label">
+                            <strong>Init Boot Partition</strong>
+                            <small>Contains init ramdisk (if exists)</small>
+                        </span>
+                    </label>
+                    <label class="checkbox-item">
+                        <input type="checkbox" id="restore_recovery" checked>
+                        <span class="checkbox-label">
+                            <strong>Recovery Partition</strong>
+                            <small>Recovery mode partition (if exists)</small>
+                        </span>
+                    </label>
+                </div>
+            </div>
+
+            <div class="section">
+                <h2 class="section-title">Module Restore Options</h2>
+                <div class="settings-list">
+                    <label class="checkbox-item">
+                        <input type="checkbox" id="restore_modules" checked>
+                        <span class="checkbox-label">
+                            <strong>Module States</strong>
+                            <small>Disable all modules and re-enable only backed up ones</small>
+                        </span>
+                    </label>
+                    <label class="checkbox-item">
+                        <input type="checkbox" id="keep_nobricking_enabled" checked disabled>
+                        <span class="checkbox-label">
+                            <strong>Keep NoBricking Enabled</strong>
+                            <small>Always keep NoBricking enabled (cannot be disabled)</small>
+                        </span>
+                    </label>
+                </div>
+            </div>
+
+            <div class="section">
+                <h2 class="section-title">Safety Options</h2>
+                <div class="settings-list">
+                    <label class="checkbox-item">
+                        <input type="checkbox" id="auto_reboot_after_restore" checked>
+                        <span class="checkbox-label">
+                            <strong>Auto Reboot After Restore</strong>
+                            <small>Automatically reboot after successful restoration</small>
+                        </span>
+                    </label>
+                    <label class="checkbox-item">
+                        <input type="checkbox" id="clear_flags_after_restore" checked>
+                        <span class="checkbox-label">
+                            <strong>Clear Flags After Restore</strong>
+                            <small>Remove boot flags after restoration completes</small>
+                        </span>
+                    </label>
+                </div>
+            </div>
+        </div>
+
+        <!-- Documentation Page -->
+        <div class="page" id="docs-page">
+            <div class="page-header">
+                <h1>Documentation</h1>
+            </div>
+            <div id="docsify-container"></div>
+        </div>
+
+        <!-- About Page -->
+        <div class="page" id="about-page">
+            <div class="page-header">
+                <h1>About NoBricking</h1>
+            </div>
+
+            <div class="about-content">
+                <div class="about-logo">🛡️</div>
+                <h2>NoBricking</h2>
+                <p class="version">Version <span id="moduleVersion">1.0.4</span></p>
+                
+                <div class="section">
+                    <h3>Anti-Bricking Protection</h3>
+                    <p>NoBricking is an advanced module that automatically protects your device from bricking by monitoring boot attempts and restoring backups when failures are detected.</p>
+                </div>
+
+                <div class="section">
+                    <h3>Key Features</h3>
+                    <ul class="feature-list">
+                        <li>✅ Automatic partition backup (boot, init_boot, recovery)</li>
+                        <li>✅ Boot failure detection with flag system</li>
+                        <li>✅ Automatic restoration after 3 failed boots</li>
+                        <li>✅ Module state management</li>
+                        <li>✅ Manual backup creation</li>
+                        <li>✅ Customizable restore settings</li>
+                        <li>✅ Advanced web interface</li>
+                    </ul>
+                </div>
+
+                <div class="section">
+                    <h3>Compatibility</h3>
+                    <ul class="compat-list">
+                        <li>Magisk (all versions)</li>
+                        <li>KernelSU (original)</li>
+                        <li>KernelSU Next</li>
+                        <li>Sukisu Ultra</li>
+                        <li>APatch</li>
+                    </ul>
+                </div>
+
+                <div class="section">
+                    <h3>Developer</h3>
+                    <p>Created by <strong>cyanmint</strong></p>
+                </div>
+
+                <div class="section">
+                    <h3>License</h3>
+                    <p>Open Source Software</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="assets/js/ksu-api.js"></script>
+    <script src="assets/js/app.js"></script>
+</body>
+</html>

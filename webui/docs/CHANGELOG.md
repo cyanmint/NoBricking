@@ -1,33 +1,5 @@
 # Changelog
 
-## Version 1.1.0
-
-### New Features
-- **Advanced WebUI Manager** 🎉
-  - Modern app-like interface optimized for mobile and desktop
-  - Complete backup management system
-    - View all current and historical backups
-    - Set active backup for restoration
-    - Create new backups manually
-    - Delete old backups
-  - Boot flag management
-    - View all boot flags with timestamps
-    - Clear all flags or delete individual flags
-    - Real-time flag count monitoring
-  - Customizable restore settings
-    - Select which partitions to restore (boot, init_boot, recovery)
-    - Configure module restoration behavior
-    - Set auto-reboot and flag cleanup options
-  - Integrated documentation using Docsify
-    - All module documentation accessible from WebUI
-    - Searchable documentation
-    - Clean, organized presentation
-  - Real-time dashboard
-    - System status overview
-    - Quick action buttons
-    - Activity log
-  - Responsive design that looks like a native manager app
-
 ## Version 1.0.4
 
 ### Bug Fixes
