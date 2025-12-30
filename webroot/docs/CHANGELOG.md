@@ -1,0 +1,150 @@
+# Changelog
+
+## Version 1.2.1 (2024-12-30)
+
+### Bug Fixes
+- **Fixed Recovery Partition A/B Support**
+  - Recovery partition now properly handles A/B slots on supported devices
+  - Backup creates `recovery_a.img` or `recovery_b.img` based on active slot
+  - Restore correctly identifies and writes to appropriate recovery slot
+  - Maintains backward compatibility with non-A/B recovery partitions
+
+### Technical Changes
+- Updated `action.sh` to use `find_boot_partition()` for recovery backup
+- Updated `post-fs-data.sh` to detect A/B recovery partitions during restore
+- Recovery partition backup filename now includes slot suffix when applicable
+
+## Version 1.2.0 (2024-12-30)
+
+### New Features
+- **🌍 Internationalization (i18n) Support**
+  - Support for 20+ languages in WebUI
+  - Automatic language detection based on browser settings
+  - Manual language selection via dropdown menu
+  - Supported languages:
+    - English, Chinese (Simplified/Traditional), Japanese, Korean
+    - Spanish, French, German, Russian, Portuguese, Italian
+    - Arabic, Hindi, Turkish, Vietnamese, Thai
+    - Indonesian, Malay, Polish, Dutch
+  - **📚 Multilingual Documentation**
+    - Documentation available in multiple languages
+    - Language-specific Docsify navigation
+    - Automatic docs language switching
+    - Chinese (Simplified) documentation fully translated
+
+### Improvements
+- Enhanced WebUI user experience with native language support
+- Language preference persists across sessions
+- Improved accessibility for non-English speakers
+- Updated module description to highlight multilingual support
+
+### Technical Changes
+- Added `i18n.js` internationalization system
+- Updated HTML with `data-i18n` attributes for translation
+- Created language-specific documentation structure
+- Docsify configured for multi-language support
+- CSS improvements for language selector styling
+
+## Version 1.1.0
+
+### New Features
+- **Advanced WebUI Manager** 🎉
+  - Modern app-like interface optimized for mobile and desktop
+  - Complete backup management system
+    - View all current and historical backups
+    - Set active backup for restoration
+    - Create new backups manually
+    - Delete old backups
+  - Boot flag management
+    - View all boot flags with timestamps
+    - Clear all flags or delete individual flags
+    - Real-time flag count monitoring
+  - Customizable restore settings
+    - Select which partitions to restore (boot, init_boot, recovery)
+    - Configure module restoration behavior
+    - Set auto-reboot and flag cleanup options
+  - Integrated documentation using Docsify
+    - All module documentation accessible from WebUI
+    - Searchable documentation
+    - Clean, organized presentation
+  - Real-time dashboard
+    - System status overview
+    - Quick action buttons
+    - Activity log
+  - Responsive design that looks like a native manager app
+
+## Version 1.0.4
+
+### Bug Fixes
+- **Fixed KSU module visibility**: Module now properly shows in KernelSU Manager
+  - Removed `SKIPUNZIP=1` from customize.sh which was causing installation issues
+  - Previously, ALL files from ZIP were extracted to module directory, including documentation
+  - KSU Manager couldn't properly detect the module with extra files present
+  - Module now installs cleanly with only necessary runtime files
+- **Updated build instructions**: Documented correct way to create module ZIP for KSU compatibility
+  - Only include essential module files (no README.md, BUILD.md, etc. in the ZIP)
+  - This ensures clean installation and proper module detection
+
+## Version 1.0.3
+
+### Changes
+- **Simplified module directory detection**: Always use `/data/adb/modules` path
+  - All modern root solutions (Magisk, KernelSU, KSU Next, Sukisu Ultra, APatch) now use the standard `/data/adb/modules` path
+  - Removed conditional directory detection logic for cleaner, more reliable code
+  - No more need to check for `/data/adb/ksu/modules` as all KSU variants have standardized
+
+## Version 1.0.2
+
+### Bug Fixes
+- **Fixed KernelSU compatibility**: Module now works correctly with KernelSU, KSU Next, Sukisu Ultra, and other KSU variants
+- Changed runtime KSU detection from environment variable check to directory-based detection
+  - Now checks for `/data/adb/ksu/modules` directory existence instead of `$KSU` variable
+  - `$KSU` variable is only available during installation, not at runtime
+  - Module now correctly backs up and restores modules in KSU environment
+
+## Version 1.0.1
+
+### Bug Fixes
+- Removed WebUI to fix KSU installation errors
+- WebUI will be re-added in a future release with proper KSU integration
+
+## Version 1.1.0
+
+### New Features (REMOVED in 1.0.1 due to installation issues)
+- **Web UI for KSU**: Added intuitive web-based management interface for KernelSU users
+  - Real-time status monitoring (boot flags, backup information)
+  - One-click backup creation
+  - Manual flag clearing
+  - Backup restore with confirmation
+  - Activity logging
+  - Responsive design for mobile and desktop
+- Integrated with KernelSU's built-in WebUI system (no separate HTTP server required)
+
+## Version 1.0.0 (Initial Release)
+
+### Features
+- **Automatic Partition Backup**: Backs up boot, init_boot (if present), and recovery partitions during module installation
+- **Module State Management**: Records list of enabled modules and restores only those modules during recovery
+  - During backup: Saves list of all currently enabled modules
+  - During restore: Disables ALL modules first, then re-enables only the backed up modules
+  - NoBricking module itself is never disabled to maintain protection
+- **Boot Failure Detection**: Creates flag files on each boot attempt to track boot failures
+- **Automatic Recovery**: After 3 consecutive failed boots, automatically restores backed up partitions and module configuration
+- **Boot Success Monitoring**: Removes flag files after successful boot and /data decryption
+- **Manual Backup Trigger**: Action button in Magisk/KSU Manager to create backups on-demand
+- **Wide Compatibility**: Supports Magisk, KernelSU (original, Next), APatch, Sukisu Ultra, and other variants
+- **A/B Partition Support**: Automatically detects and backs up the active slot
+- **Comprehensive Logging**: Maintains detailed logs of all backup, restore, and boot operations
+
+### Technical Details
+- Backup storage: `/data/adb/nobricking_backups/`
+- Flag file tracking in: `/data/adb/nobricking_backups/flags/`
+- Automatic cleanup of flags after successful boot
+- Smart partition detection for various device configurations
+- Safe uninstallation with backup preservation option
+
+### Safety Features
+- Never disables itself during restore operations
+- Preserves backups on module uninstallation
+- Validates partition accessibility before operations
+- Comprehensive error logging for troubleshooting

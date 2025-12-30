@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>NoBricking Documentation</title>
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+  <meta name="description" content="NoBricking module documentation">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/docsify@4/lib/themes/vue.css">
+  <style>
+    :root {
+      --theme-color: #42b983;
+      --theme-color-dark: #2c3e50;
+    }
+    .app-name-link img {
+      width: 2rem;
+    }
+  </style>
+</head>
+<body>
+  <div id="app">Loading...</div>
+  <script>
+    window.$docsify = {
+      name: 'NoBricking',
+      repo: 'cyanmint/NoBricking',
+      loadSidebar: true,
+      auto2top: true,
+      subMaxLevel: 3,
+      search: {
+        paths: 'auto',
+        placeholder: {
+          '/zh-CN/': '搜索',
+          '/': 'Search'
+        },
+        noData: {
+          '/zh-CN/': '没有结果',
+          '/': 'No results'
+        }
+      },
+      fallbackLanguages: ['en'],
+      alias: {
+        '/.*/_sidebar.md': '/_sidebar.md',
+        '/zh-CN/.*/_sidebar.md': '/zh-CN/_sidebar.md'
+      }
+    }
+  </script>
+  <script src="https://cdn.jsdelivr.net/npm/docsify@4/lib/docsify.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/docsify@4/lib/plugins/search.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/docsify@4/lib/plugins/zoom-image.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/prismjs@1/components/prism-bash.min.js"></script>
+</body>
+</html>

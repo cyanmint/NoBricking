@@ -1,0 +1,29 @@
+# Build artifacts
+*.zip
+*.img
+*.log
+
+# Temporary files
+*.tmp
+*.bak
+*~
+
+# Test directories
+test_output/
+
+# Editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Test files
+/tmp/
+test_*.sh
+
+# Don't ignore update.json even though it's a config file
+!update.json
