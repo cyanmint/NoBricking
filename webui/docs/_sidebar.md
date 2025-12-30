@@ -4,3 +4,4 @@
 - [Security](SECURITY.md)
 - [Workflow](WORKFLOW.md)
 - [Implementation](IMPLEMENTATION.md)
+- [Copying](copying.txt)

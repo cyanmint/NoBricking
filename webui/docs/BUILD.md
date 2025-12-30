@@ -2,12 +2,12 @@
 
 ## Creating the Module ZIP
 
-To create a flashable ZIP for Magisk/KernelSU:
+To create a flashable ZIP for Magisk/KernelSU with WebUI support:
 
 ### Recommended Method: Manual ZIP with Required Files Only
 
 ```bash
-# Create ZIP with ONLY the necessary module files
+# Create ZIP with necessary module files including WebUI
 zip -r NoBricking.zip \
     module.prop \
     customize.sh \
@@ -16,25 +16,15 @@ zip -r NoBricking.zip \
     action.sh \
     boot-completed.sh \
     uninstall.sh \
-    update.json
+    update.json \
+    webui/
 ```
 
-**Important:** Do NOT include documentation files (README.md, BUILD.md, CHANGELOG.md, etc.) in the module ZIP as they can interfere with KSU module detection.
-
-### Alternative: Using excludes
-
-```bash
-# On Linux/macOS - exclude documentation and git files
-zip -r NoBricking.zip . \
-    -x '*.git*' \
-    -x '.gitignore' \
-    -x 'README.md' \
-    -x 'CHANGELOG.md' \
-    -x 'SECURITY.md' \
-    -x 'WORKFLOW.md' \
-    -x 'BUILD.md' \
-    -x 'IMPLEMENTATION.md'
-```
+**Important Notes:**
+- Include the entire `webui/` directory for WebUI functionality
+- All documentation files are now in `webui/docs/` directory
+- No markdown files in the root directory - they won't be extracted to module root during installation
+- This ensures clean installation and proper module detection in KSU Manager
 
 ## Required Files in ZIP
 
