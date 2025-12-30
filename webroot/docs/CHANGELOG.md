@@ -1,5 +1,19 @@
 # Changelog
 
+## Version 1.2.1 (2024-12-30)
+
+### Bug Fixes
+- **Fixed Recovery Partition A/B Support**
+  - Recovery partition now properly handles A/B slots on supported devices
+  - Backup creates `recovery_a.img` or `recovery_b.img` based on active slot
+  - Restore correctly identifies and writes to appropriate recovery slot
+  - Maintains backward compatibility with non-A/B recovery partitions
+
+### Technical Changes
+- Updated `action.sh` to use `find_boot_partition()` for recovery backup
+- Updated `post-fs-data.sh` to detect A/B recovery partitions during restore
+- Recovery partition backup filename now includes slot suffix when applicable
+
 ## Version 1.2.0 (2024-12-30)
 
 ### New Features

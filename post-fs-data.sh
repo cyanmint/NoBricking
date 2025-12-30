@@ -87,15 +87,24 @@ restore_backups() {
         fi
     fi
     
-    # Restore recovery partition
-    if [ -f "$BACKUP_DIR/partitions/recovery.img" ]; then
+    # Restore recovery partition (can be A/B on some devices)
+    if [ -f "$BACKUP_DIR/partitions/recovery${SLOT}.img" ]; then
         echo "$(date): Restoring recovery partition" >> "$BACKUP_DIR/restore.log"
-        RECOVERY_PART=$(find /dev/block -name "recovery" 2>/dev/null | head -n1)
-        if [ -z "$RECOVERY_PART" ]; then
-            RECOVERY_PART=$(find /dev/block/by-name -name "recovery" 2>/dev/null | head -n1)
+        # Find recovery partition - handle both A/B and non-A/B devices
+        if [ -n "$SLOT" ]; then
+            RECOVERY_PART=$(find /dev/block -name "recovery${SLOT}" -o -name "recovery_[ab]" 2>/dev/null | grep "${SLOT}" | head -n1)
+            if [ -z "$RECOVERY_PART" ]; then
+                RECOVERY_PART=$(find /dev/block/by-name -name "recovery${SLOT}" -o -name "recovery_[ab]" 2>/dev/null | grep "${SLOT}" | head -n1)
+            fi
+        else
+            # Non-A/B device
+            RECOVERY_PART=$(find /dev/block -name "recovery" 2>/dev/null | head -n1)
+            if [ -z "$RECOVERY_PART" ]; then
+                RECOVERY_PART=$(find /dev/block/by-name -name "recovery" 2>/dev/null | head -n1)
+            fi
         fi
         if [ -n "$RECOVERY_PART" ] && [ -b "$RECOVERY_PART" ]; then
-            dd if="$BACKUP_DIR/partitions/recovery.img" of="$RECOVERY_PART" bs=4096 conv=fsync
+            dd if="$BACKUP_DIR/partitions/recovery${SLOT}.img" of="$RECOVERY_PART" bs=4096 conv=fsync
             if [ $? -eq 0 ]; then
                 sync
                 echo "$(date): Recovery partition restored successfully to $RECOVERY_PART" >> "$BACKUP_DIR/restore.log"

@@ -103,14 +103,15 @@ perform_backup() {
         echo "Init_boot partition not found (may not exist on this device)"
     fi
     
-    # Backup recovery partition
-    RECOVERY_PART=$(find_partition "recovery")
+    # Backup recovery partition (can be A/B on some devices)
+    RECOVERY_PART=$(find_boot_partition "$SLOT" "recovery")
+    
     if [ -n "$RECOVERY_PART" ] && [ -b "$RECOVERY_PART" ]; then
         echo "Backing up recovery partition from $RECOVERY_PART"
         # Check available space
         PART_SIZE=$(blockdev --getsize64 "$RECOVERY_PART" 2>/dev/null || echo "0")
         if [ "$PART_SIZE" -gt 0 ]; then
-            dd if="$RECOVERY_PART" of="$BACKUP_DIR/partitions/recovery.img" bs=4096 conv=fsync 2>&1
+            dd if="$RECOVERY_PART" of="$BACKUP_DIR/partitions/recovery${SLOT}.img" bs=4096 conv=fsync 2>&1
             if [ $? -eq 0 ]; then
                 sync
                 echo "Recovery partition backed up successfully"
