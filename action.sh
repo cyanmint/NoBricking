@@ -126,9 +126,13 @@ perform_backup() {
     
     # Backup enabled modules list
     echo "Backing up enabled modules list"
-    if [ -n "$KSU" ]; then
+    # Detect KSU by checking for KSU modules directory
+    if [ -d "/data/adb/ksu/modules" ]; then
         MODULE_DIR="/data/adb/ksu/modules"
+    elif [ -d "/data/adb/modules" ]; then
+        MODULE_DIR="/data/adb/modules"
     else
+        # Fallback - shouldn't happen but just in case
         MODULE_DIR="/data/adb/modules"
     fi
     

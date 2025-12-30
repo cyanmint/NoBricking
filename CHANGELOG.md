@@ -1,5 +1,14 @@
 # Changelog
 
+## Version 1.0.2
+
+### Bug Fixes
+- **Fixed KernelSU compatibility**: Module now works correctly with KernelSU, KSU Next, Sukisu Ultra, and other KSU variants
+- Changed runtime KSU detection from environment variable check to directory-based detection
+  - Now checks for `/data/adb/ksu/modules` directory existence instead of `$KSU` variable
+  - `$KSU` variable is only available during installation, not at runtime
+  - Module now correctly backs up and restores modules in KSU environment
+
 ## Version 1.0.1
 
 ### Bug Fixes

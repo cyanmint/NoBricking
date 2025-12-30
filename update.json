@@ -1,6 +1,6 @@
 {
-  "version": "1.0.1",
-  "versionCode": 3,
+  "version": "1.0.2",
+  "versionCode": 4,
   "zipUrl": "https://github.com/cyanmint/NoBricking/releases/latest/download/NoBricking.zip",
   "changelog": "https://raw.githubusercontent.com/cyanmint/NoBricking/main/CHANGELOG.md"
 }
