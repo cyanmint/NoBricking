@@ -109,15 +109,8 @@ restore_backups() {
     if [ -f "$BACKUP_DIR/modules/module_list.txt" ]; then
         echo "$(date): Restoring module states" >> "$BACKUP_DIR/restore.log"
         
-        # Detect KSU by checking for KSU modules directory
-        if [ -d "/data/adb/ksu/modules" ]; then
-            MODULE_DIR="/data/adb/ksu/modules"
-        elif [ -d "/data/adb/modules" ]; then
-            MODULE_DIR="/data/adb/modules"
-        else
-            # Fallback - shouldn't happen but just in case
-            MODULE_DIR="/data/adb/modules"
-        fi
+        # All modern root solutions (Magisk, KSU, KSU Next, Sukisu Ultra, APatch) use /data/adb/modules
+        MODULE_DIR="/data/adb/modules"
         
         # Create disable files for all modules except nobricking
         if [ -d "$MODULE_DIR" ]; then

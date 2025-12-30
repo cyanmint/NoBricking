@@ -17,7 +17,7 @@ else
 fi
 
 ui_print "- Installing NoBricking Module"
-ui_print "- Version: 1.0.2"
+ui_print "- Version: 1.0.3"
 
 # Extract module files
 ui_print "- Extracting module files"

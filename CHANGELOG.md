@@ -1,5 +1,13 @@
 # Changelog
 
+## Version 1.0.3
+
+### Changes
+- **Simplified module directory detection**: Always use `/data/adb/modules` path
+  - All modern root solutions (Magisk, KernelSU, KSU Next, Sukisu Ultra, APatch) now use the standard `/data/adb/modules` path
+  - Removed conditional directory detection logic for cleaner, more reliable code
+  - No more need to check for `/data/adb/ksu/modules` as all KSU variants have standardized
+
 ## Version 1.0.2
 
 ### Bug Fixes
